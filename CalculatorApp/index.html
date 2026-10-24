@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A modern, clean, and professional calculator interface built with HTML and CSS.">
+  <title>Modern Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <main class="calculator-wrapper">
+    <article class="calculator" aria-label="Calculator">
+      <header class="calculator-header">
+        <div class="window-controls">
+          <span class="dot dot-close"></span>
+          <span class="dot dot-minimize"></span>
+          <span class="dot dot-expand"></span>
+        </div>
+        <span class="brand-title">CALC</span>
+      </header>
+
+      <section class="calculator-display" aria-live="polite">
+        <div class="display-history" id="displayHistory">12 × 45</div>
+        <output class="display-current" id="displayCurrent">0</output>
+      </section>
+
+      <section class="calculator-keypad" aria-label="Calculator Keypad">
+        <button type="button" class="btn btn-clear" aria-label="Clear">C</button>
+        <button type="button" class="btn btn-function" aria-label="Delete">DEL</button>
+        <button type="button" class="btn btn-operator" aria-label="Percentage">%</button>
+        <button type="button" class="btn btn-operator" aria-label="Divide">/</button>
+
+        <button type="button" class="btn btn-number" aria-label="7">7</button>
+        <button type="button" class="btn btn-number" aria-label="8">8</button>
+        <button type="button" class="btn btn-number" aria-label="9">9</button>
+        <button type="button" class="btn btn-operator" aria-label="Multiply">*</button>
+
+        <button type="button" class="btn btn-number" aria-label="4">4</button>
+        <button type="button" class="btn btn-number" aria-label="5">5</button>
+        <button type="button" class="btn btn-number" aria-label="6">6</button>
+        <button type="button" class="btn btn-operator" aria-label="Subtract">-</button>
+
+        <button type="button" class="btn btn-number" aria-label="1">1</button>
+        <button type="button" class="btn btn-number" aria-label="2">2</button>
+        <button type="button" class="btn btn-number" aria-label="3">3</button>
+        <button type="button" class="btn btn-operator" aria-label="Add">+</button>
+
+        <button type="button" class="btn btn-PlusMinus" aria-label="Plus Minus">+-</button>
+        <button type="button" class="btn btn-number" aria-label="0">0</button>
+        <button type="button" class="btn btn-number" aria-label="Decimal Point">.</button>
+        <button type="button" class="btn btn-equals" aria-label="Equals">=</button>
+      </section>
+    </article>
+  </main>
+<script>
+
+const displayCurrent = document.getElementById("displayCurrent");
+const btnContainer = document.querySelector(".buttons-container") || document.body; 
+const del = document.querySelector(".btn-function");
+const C = document.querySelector(".btn-clear");
+ const equals = document.querySelector(".btn-equals");
+ const displayHistory = document.getElementById("displayHistory");
+const plusMinusBtn = document.querySelector(".btn-PlusMinus");
+const calc = {
+  op: null,
+  num1: null,
+  num2: null,
+  result: null
+};
+
+function sum(num1, num2) {
+  return num1 + num2;
+}
+
+function multipl(num1, num2) {
+  return num1 * num2;
+}
+
+function divide(num1, num2) {
+  return num2 === 0 ? "Error" : parseFloat(num1 /   num2);
+}
+
+function sub(num1, num2) {
+  return num1 - num2;
+}
+
+function percentage(num1, num2) {
+  return  parseFloat(num1 % num2);
+}
+
+function checkOperator(operator, num1, num2) {
+  if (typeof num1 !== "number" || typeof num2 !== "number") {
+    alert(`Invalid numbers: ${num1} and ${num2}`);
+    return "Error";
+  }
+
+  switch (operator) {
+    case "+":
+      return sum(num1, num2);
+    case "-":
+      return sub(num1, num2);
+    case "*":
+      return multipl(num1, num2);
+    case "/":
+      return divide(num1, num2);
+    case "%":
+      return percentage(num1, num2);
+    
+    default:
+      alert("Invalid Operator");
+      return "Error";
+  }
+}
+
+function resetCalc() {
+  calc.num1 = null;
+  calc.num2 = null;
+  calc.op = null;
+  displayCurrent.textContent = "0";
+}
+
+C.addEventListener("click", resetCalc);
+ del.addEventListener("click", resetCalc);
+ plusMinusBtn.addEventListener("click", ()=>{
+  alert("This feature is not implemented yet. Please use the keyboard for this operation.");
+ });
+
+btnContainer.addEventListener("click", (e) => {
+  const target = e.target;
+
+  if (!target.matches("button")) return;
+
+  if (target.classList.contains("btn-operator")) {
+    if (displayCurrent.textContent === "0" && calc.num1 === null) {
+      alert("You Can't Enter Operator Before Number");
+      return;
+    }
+    calc.op = target.innerText.trim();
+    displayCurrent.textContent += calc.op;
+    return;
+  }
+
+  if (target.classList.contains("btn-number") || !isNaN(target.innerText.trim())) {
+    const value = target.innerText.trim();
+
+  
+   if (calc.op === null) {
+    if (calc.num1 === null) {
+      calc.num1 = value;
+    } else {
+      calc.num1 += value;
+    }
+
+    displayCurrent.textContent = calc.num1;
+
+  } else {
+    if (calc.num2 === null) {
+      calc.num2 = value;
+    } else {
+      calc.num2 += value;
+    }
+
+    displayCurrent.textContent = `${calc.num1} ${calc.op} ${calc.num2}`;
+  }
+    if (calc.num1 !== null && calc.num2 !== null && calc.op !== null) {
+       calc.result = checkOperator(calc.op, Number(calc.num1), Number(calc.num2));
+    }
+  }
+});
+equals.addEventListener("click",()=>{
+ displayCurrent.textContent = calc.result;
+setTimeout(()=>{
+  displayHistory.textContent = `${calc.num1} ${calc.op} ${calc.num2}`;
+},500);
+
+});
+
+</script>
+
+</body>
+</html>
